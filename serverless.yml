@@ -1,0 +1,57 @@
+service: my-serverless-api
+
+provider:
+  name: aws
+  runtime: python3.8
+
+functions:
+  create:
+    handler: create.create
+    events:
+      - http:
+          path: items
+          method: post
+
+  readAll:
+    handler: read_all.read_all
+    events:
+      - http:
+          path: items
+          method: get
+
+  readOne:
+    handler: read_one.read_one
+    events:
+      - http:
+          path: items/{id}
+          method: get
+
+  update:
+    handler: update.update
+    events:
+      - http:
+          path: items/{id}
+          method: put
+
+  delete:
+    handler: delete.delete
+    events:
+      - http:
+          path: items/{id}
+          method: delete
+
+resources:
+  Resources:
+    ItemsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Items
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
